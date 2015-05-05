@@ -35,7 +35,11 @@ pause();
 disp('1.4');
 x = fftshift(fft(xn));
 
-W = linspace(-ws/2 + ws/(2*N), ws/2 - ws/(2*N), N);
+if mod(N,2) == 0
+    W = linspace(-ws/2, ws/2 - ws/N, N);
+else
+    W = linspace(-ws/2 + ws/(2*N), ws/2 - ws/(2*N), N);
+end
 
 figure(2), subplot(212), stem(W, abs(x)), title('DFT em módulo');
 
@@ -63,6 +67,8 @@ Teta = angle(cm(mid+1:N));
 figure(4), subplot(212), stem(0:mid-1,Cm), title('Cm');
 
 subplot(211), plot(0:mid-1,Teta,'.'), title('Tetam');
+
+pause();
 
 %1.7
 disp('1.7');
