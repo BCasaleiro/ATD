@@ -13,7 +13,7 @@ pause();
 x_img = fftshift(fft2(img));
 [nl, nc] = size(x_img);
 
-if mode(nl, 2) == 0
+if mod(nl, 2) == 0
     xx = -nl/2:nl/2-1;
 else
     xx = fix(-nl/2):fix(nl/2);
