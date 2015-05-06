@@ -6,9 +6,12 @@ clc
 
 %2.1
 disp('2.1');
-nbits = 16;
+file = 'saxriff.wav';
 
-[y, Fs] = audioread('saxriff.wav');
+info = audioinfo(file);
+nbits = info.BitsPerSample;
+
+[y, Fs] = audioread(file);
 sound(y, Fs);
 
 pause();

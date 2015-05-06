@@ -1,3 +1,9 @@
+%Exercicio 3
+
+close all;
+clear all;
+clc
+
 %3.1
 [img, map] = imread('lena.bmp', 'bmp');
 
