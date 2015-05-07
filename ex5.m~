@@ -12,13 +12,13 @@ end
 
 if option == 1
     janela = round(150/1000*fs);
+    sobreposicao = round(12.5);
 elseif option == 2
-    janela = round(187/1000*fs);
+    janela = round();
+    sobreposicao = round();
 else
-    janela = round(27.2/1000*fs);
-end
-
-sobreposicao = round(janela/8);
+    janela = round();
+    sobreposicao = round();
 
 disp(fs); 
 
@@ -29,6 +29,7 @@ if size(x, 2) == 2
     end
     x = temp;
 end
+
 sound(x, fs);
 X = fftshift(fft(x));
 sizeofX = length(x);
@@ -51,6 +52,9 @@ pause();
 
 frequencia_notas = [262 227 294 311 330 349 370 392 415 440 466 494];
 nome_notas = {'Do   ';'Do#  ';'Re   ';'Re#  ';'Mi   ';'Fa   ';'Fa#  ';'Sol  ';'Sol# ';'La   ';'La#  ';'Si   '};
+
+janela = round(150/1000*fs);
+sobreposicao = round(12.5/1000*fs);
 
 N = janela;
 
