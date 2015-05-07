@@ -10,17 +10,6 @@ end
 
 [x, fs] = audioread(som);
 
-if option == 1
-    janela = round(150/1000*fs);
-elseif option == 2
-    janela = round(187/1000*fs);
-else
-    janela = round(27.2/1000*fs);
-end
-
-sobreposicao = round(janela/8);
-
-disp(fs); 
 
 if size(x, 2) == 2
     temp = zeros(length(x), 1);
@@ -29,7 +18,11 @@ if size(x, 2) == 2
     end
     x = temp;
 end
-sound(x, fs);
+
+player = audioplayer(x, fs);
+player.play();
+
+
 X = fftshift(fft(x));
 sizeofX = length(x);
 
@@ -49,8 +42,19 @@ title('Magnitude');
 disp('Press any key to continue');
 pause();
 
-frequencia_notas = [262 227 294 311 330 349 370 392 415 440 466 494];
+frequencia_notas = [262 277 294 311 330 349 370 392 415 440 466 494];
 nome_notas = {'Do   ';'Do#  ';'Re   ';'Re#  ';'Mi   ';'Fa   ';'Fa#  ';'Sol  ';'Sol# ';'La   ';'La#  ';'Si   '};
+
+switch(option)
+    case(1)
+        janela = round(160/1000*fs);
+    case(2)
+        janela = round(187/1000*fs);
+    case(3)
+        janela = round(27.2/1000*fs);
+end
+
+sobreposicao = round(janela/8);
 
 N = janela;
 
@@ -68,12 +72,12 @@ amps = zeros(size(matrix_sizeofX));
 
 j=1;
 indice = find(f >= 100, 1);
-for i = 1: N-sobreposicao: sizeofX-N
+for i=1: N-sobreposicao: sizeofX-N
     janela_x = fftshift(fft(x(i : i+N-1) .* hamming(N), N));
-    [x_abs_max, ind] = max(abs(janela_x(indice:end)));
+    [x_abs_max, ind] = max(abs(janela_x(indice: end)));
     
     amps(j) = x_abs_max;
-    freqs(j) = abs(f(ind + indice -1));
+    freqs(j) = abs(f(ind + indice - 1));
     j = j + 1;
 end
 
@@ -90,6 +94,8 @@ disp('Press any key to continue');
 pause();
 
 fprintf('Notas do som %s\n', som);
+disp(frequencia_notas);
+disp(nome_notas);
 for i=1 : length(freqs)
     freq = freqs(i);
     if freq ~= 0
@@ -109,7 +115,7 @@ for i=1 : length(freqs)
                 j = j-1;
             end
         end
-        fprintf('%s \n', nome_notas{j});
+        fprintf('%-5s \n', nome_notas{j});
     end
 end
         
