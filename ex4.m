@@ -51,28 +51,18 @@ matrixsize = 1 : N - vstep : size_y - N;
 freqs = zeros(size(matrixsize));
 amps = zeros(size(matrixsize));
 
+j= 1;
 
-xaprox = zeros(size(y));
-
-Ts = 1/fs;
-t = 0:Ts:size_y*Ts-Ts;
-
-j=1;
-for i=1 : N-vstep : size_y-N
-    janelaX = fftshift(fft(y(i : i+N-1) .* hamming(N), N));
-    Xabsmax = max(abs(janelaX));
-    ind = find(abs(janelaX) == Xabsmax);
+ind100Hz = find(f >= 100, 1);
+for i=1 : N-vstep : size_y-N    
+    MjanelaX = abs(fftshift(fft(y(i : i+N-1) .* hamming(N), N))); 
+    [Xabsmax, ind] = max(MjanelaX(ind100Hz:end));
     
     amps(j) = Xabsmax;
-    freqs(j) = f(ind(end));   
-    
-    A = 10*abs(amps(j))/N;
-    xaprox(i : i+N-1) = A * sin(2 * pi * freqs(j) * t(i : i+N-1));
-    
-    j=j+1;   
+    freqs(j) = abs(f(ind + ind100Hz - 1));
+        
+    j=j+1;
 end
-
-freqs(freqs <= 100) = 0;
 
 figure(2), plot(1 : time-step : size_y/fs*1000-time, freqs, '.'), title('Frequências fundamentais do sistema');
 
@@ -91,30 +81,39 @@ else
     med = 9;
 end
 
-x2 = zeros(size_y, 1);
-
-for i=1 : size_y-med
-	x2(i) = median(y(i : i+med-1));
-end
-
 j=1;
+ind100Hz = find(f >= 100, 1);
 for i=1 : N-vstep : size_y-N
-    janelaX = fftshift(fft(x2(i : i+N-1).*hamming(N), N));
-    Xabsmax = max(abs(janelaX));
-    ind = find(abs(janelaX) == Xabsmax);
+    MjanelaX = abs(fftshift(fft(y(i : i+N-1).*hamming(N), N)));
+    [Xabsmax, ind] = max(MjanelaX(ind100Hz:end));
     
     amps(j) = Xabsmax;
-    freqs(j) = f(ind(end));   
-    
-    A = 10*abs(amps(j))/N;
-    xaprox(i : i+N-1) = A*sin(2*pi*freqs(j)*t(i : i+N-1));
+    freqs(j) = abs(f(ind + ind100Hz - 1));   
     
     j=j+1;   
 end
 
-freqs(freqs <= 100) = 0;
+%freqs_med = zeros(length(freqs), 1);
+freqs_med = freqs;
 
-figure(3), plot(1 : time-step : size_y/fs*1000-time, freqs, '.'), title('Frequências fundamentais do sinal com filtro da mediana escolhida');
+for i=1 : length(freqs) - med
+	freqs_med(i) = median(freqs(i : i+med-1));
+end
+
+xaprox = zeros(size(y));
+
+Ts = 1/fs;
+t = 0:Ts:size_y*Ts-Ts;
+
+j=1;
+for i=1 : N-vstep : size_y-N
+    A = 10*abs(amps(j))/N;
+    xaprox(i : i+N-1) = A*sin(2*pi*freqs_med(j)*t(i : i+N-1));
+    
+    j = j + 1;
+end
+
+figure(3), plot(1 : time-step : size_y/fs*1000-time, freqs_med, '.'), title('Frequências fundamentais do sinal com filtro da mediana escolhida');
 
 pause();
 
@@ -126,6 +125,4 @@ sound(somR, fs);
 
 pause();
 
-figure(4), subplot(211), plot(x2), title('saxriff.wav com filtro da mediana escolhida');
-
-subplot(212), plot(somR), title('saxriff.wav reconstruído com filtro da mediana escolhida');
+figure(4), plot(somR), title('saxriff.wav reconstruído com filtro da mediana escolhida');

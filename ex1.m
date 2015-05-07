@@ -21,6 +21,7 @@ xt = -1 + 3 * sin(30 * pi * t) + 4 * cos(20 * pi * t + (pi / 4)) .* sin(45 * pi 
 
 %1.2
 N = T0 / Ts;
+disp(N);
 n = 0 : N-1;
 
 xn = -1 + 3 * sin(30 * pi * n * Ts) + 4 * cos(20 * pi * n * Ts + (pi / 4)) .* sin(45 * pi * n * Ts);
